@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rayhunter Install Wizard — Flash EFF's IMSI Catcher Detector on Orbic RC400L</title>
+<meta name="description" content="Step-by-step interactive wizard to install EFF's Rayhunter IMSI catcher detector on an Orbic RC400L hotspot. Auto-detects your OS.">
+<meta name="keywords" content="rayhunter, EFF, IMSI catcher, stingray detector, orbic RC400L, cell site simulator, install guide">
+<meta property="og:title" content="Rayhunter Install Wizard">
+<meta property="og:description" content="Interactive step-by-step guide to flash EFF's Rayhunter on an Orbic RC400L. Auto-detects your OS.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◈</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0c10; --bg2: #12151c; --bg3: #1a1e28;
+  --surface: #1e2230; --surface2: #252a38;
+  --border: #2a3040; --border-glow: #00ff8855;
+  --text: #e4e8f0; --text-dim: #8890a4; --text-muted: #5a6278;
+  --accent: #00ff88; --accent2: #00cc6a; --accent-dim: #00ff8822;
+  --warning: #ffaa00; --warning-dim: #ffaa0022;
+  --danger: #ff4466; --danger-dim: #ff446622;
+  --info: #44aaff; --info-dim: #44aaff22;
+  --success: #00ff88;
+  --radius: 12px; --radius-sm: 8px;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+  --display: 'Playfair Display', serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 80% 50% at 50% -10%, #00ff8808 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 100%, #44aaff06 0%, transparent 50%); pointer-events: none; z-index: 0; }
+body::after { content: ''; position: fixed; inset: 0; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 60px 60px; opacity: 0.06; pointer-events: none; z-index: 0; }
+
+header { position: relative; z-index: 2; padding: 3rem 2rem 2rem; text-align: center; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #00ff8806, transparent); }
+.logo-mark { display: inline-flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
+.logo-icon { width: 48px; height: 48px; background: var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--bg); font-weight: 900; box-shadow: 0 0 30px #00ff8833; animation: pulse-glow 3s ease-in-out infinite; }
+@keyframes pulse-glow { 0%,100% { box-shadow: 0 0 20px #00ff8822; } 50% { box-shadow: 0 0 40px #00ff8844; } }
+.logo-text { font-family: var(--display); font-size: 2rem; font-weight: 900; letter-spacing: -0.02em; background: linear-gradient(135deg, var(--accent), #66ffbb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+header p { color: var(--text-dim); font-size: 1.05rem; max-width: 560px; margin: 0 auto; line-height: 1.6; }
+.badge-row { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
+.badge { font-family: var(--mono); font-size: 0.7rem; font-weight: 500; padding: 0.3rem 0.7rem; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+.badge--green { background: var(--accent-dim); color: var(--accent); border: 1px solid #00ff8833; }
+.badge--blue { background: var(--info-dim); color: var(--info); border: 1px solid #44aaff33; }
+.badge--yellow { background: var(--warning-dim); color: var(--warning); border: 1px solid #ffaa0033; }
+
+.os-selector { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem; font-size: 0.78rem; color: var(--text-muted); }
+.os-select { font-family: var(--mono); font-size: 0.72rem; font-weight: 600; padding: 0.3rem 0.6rem 0.3rem 0.6rem; border-radius: 6px; background: var(--surface2); color: var(--accent); border: 1px solid var(--border); cursor: pointer; -webkit-appearance: none; appearance: none; padding-right: 1.4rem; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2300ff88'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.4rem center; }
+.os-select:hover { border-color: var(--accent); }
+.os-detected-note { font-size: 0.68rem; color: var(--text-muted); font-style: italic; }
+
+main { position: relative; z-index: 2; max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.progress-bar { position: sticky; top: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--border); padding: 0.75rem 0; margin-bottom: 2rem; backdrop-filter: blur(20px); }
+.progress-track { display: flex; gap: 4px; align-items: center; }
+.progress-dot { flex: 1; height: 4px; border-radius: 4px; background: var(--surface2); transition: background 0.4s, box-shadow 0.4s; cursor: pointer; position: relative; }
+.progress-dot.active { background: var(--accent); box-shadow: 0 0 10px #00ff8844; }
+.progress-dot.done { background: var(--accent2); }
+.progress-dot::after { content: attr(data-label); position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; font-family: var(--mono); color: var(--text-muted); white-space: nowrap; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+.progress-dot:hover::after { opacity: 1; }
+
+.step { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; margin-bottom: 1.5rem; transition: border-color 0.3s, opacity 0.4s, transform 0.4s; opacity: 0.5; transform: translateY(4px); }
+.step.active { border-color: var(--accent); opacity: 1; transform: translateY(0); box-shadow: 0 0 40px -10px #00ff8815, inset 0 1px 0 #00ff8811; }
+.step.completed { opacity: 0.7; transform: translateY(0); }
+.step-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; cursor: pointer; }
+.step-number { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 700; font-size: 0.85rem; background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border); flex-shrink: 0; transition: all 0.3s; }
+.step.active .step-number { background: var(--accent); color: var(--bg); border-color: var(--accent); box-shadow: 0 0 16px #00ff8833; }
+.step.completed .step-number { background: var(--accent2); color: var(--bg); border-color: var(--accent2); }
+.step-title { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.01em; }
+.step-body { color: var(--text-dim); line-height: 1.7; font-size: 0.95rem; }
+.step-body p { margin-bottom: 0.75rem; }
+.step-body a { color: var(--accent); text-decoration: none; border-bottom: 1px dashed var(--accent); transition: opacity 0.2s; }
+.step-body a:hover { opacity: 0.8; }
+.step-body kbd { font-family: var(--mono); font-size: 0.82em; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 0.1em 0.4em; }
+
+.code-block { position: relative; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1rem 1.25rem; margin: 0.75rem 0 1rem; font-family: var(--mono); font-size: 0.82rem; line-height: 1.7; overflow-x: auto; color: #b8c4d8; }
+.code-block .comment { color: var(--text-muted); }
+.code-block .cmd { color: var(--accent); }
+.code-block .flag { color: var(--info); }
+.code-block .string { color: var(--warning); }
+.copy-btn { position: absolute; top: 0.6rem; right: 0.6rem; padding: 0.3rem 0.6rem; font-family: var(--mono); font-size: 0.65rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text-dim); cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.05em; }
+.copy-btn:hover, .copy-btn.copied { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+.callout { border-radius: var(--radius-sm); padding: 1rem 1.25rem; margin: 0.75rem 0; font-size: 0.9rem; line-height: 1.6; display: flex; gap: 0.75rem; align-items: flex-start; }
+.callout-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+.callout--warning { background: var(--warning-dim); border: 1px solid #ffaa0033; color: #ffd077; }
+.callout--danger { background: var(--danger-dim); border: 1px solid #ff446633; color: #ff8899; }
+.callout--info { background: var(--info-dim); border: 1px solid #44aaff33; color: #88ccff; }
+.callout--success { background: var(--accent-dim); border: 1px solid #00ff8833; color: #66ffbb; }
+
+.checklist { list-style: none; margin: 0.75rem 0; }
+.checklist li { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid #ffffff06; font-size: 0.92rem; }
+.checklist li:last-child { border-bottom: none; }
+.check-box { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.25s; margin-top: 1px; }
+.check-box:hover { border-color: var(--accent); }
+.check-box.checked { background: var(--accent); border-color: var(--accent); }
+.check-box.checked::after { content: '✓'; color: var(--bg); font-size: 0.75rem; font-weight: 700; }
+
+.step-nav { display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: flex-end; }
+.btn { font-family: var(--sans); font-size: 0.85rem; font-weight: 600; padding: 0.65rem 1.5rem; border-radius: var(--radius-sm); border: none; cursor: pointer; transition: all 0.2s; }
+.btn--primary { background: var(--accent); color: var(--bg); box-shadow: 0 0 20px #00ff8822; }
+.btn--primary:hover { box-shadow: 0 0 30px #00ff8844; transform: translateY(-1px); }
+.btn--secondary { background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border); }
+.btn--secondary:hover { background: var(--surface); color: var(--text); }
+
+.method-toggle { display: flex; background: var(--bg); border-radius: var(--radius-sm); border: 1px solid var(--border); overflow: hidden; margin: 1rem 0; }
+.method-btn { flex: 1; padding: 0.7rem 1rem; font-family: var(--sans); font-size: 0.82rem; font-weight: 600; background: transparent; border: none; color: var(--text-dim); cursor: pointer; transition: all 0.25s; text-align: center; }
+.method-btn.active { background: var(--accent); color: var(--bg); }
+.method-btn:not(.active):hover { background: var(--surface2); }
+.method-content { display: none; }
+.method-content.active { display: block; }
+
+.release-picker { margin: 1rem 0; }
+.release-loader { display: flex; align-items: center; gap: 0.75rem; padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-dim); font-size: 0.88rem; }
+.spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.release-error { display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: var(--danger-dim); border: 1px solid #ff446633; border-radius: var(--radius-sm); color: #ff8899; font-size: 0.88rem; }
+.release-error button { margin-left: auto; padding: 0.35rem 0.9rem; font-family: var(--sans); font-size: 0.78rem; font-weight: 600; background: #ff446633; color: #ff8899; border: 1px solid #ff446655; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+.release-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.release-card { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.25s; }
+.release-card:hover { border-color: var(--accent); background: var(--surface2); }
+.release-card.selected { border-color: var(--accent); background: linear-gradient(135deg, #00ff8808, #00ff8804); box-shadow: 0 0 20px #00ff8812; }
+.release-radio { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.25s; }
+.release-card.selected .release-radio { border-color: var(--accent); background: var(--accent); }
+.release-card.selected .release-radio::after { content: ''; width: 8px; height: 8px; background: var(--bg); border-radius: 50%; }
+.release-info { flex: 1; min-width: 0; }
+.release-version { font-family: var(--mono); font-weight: 700; font-size: 0.95rem; color: var(--text); display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.release-tag { font-family: var(--mono); font-size: 0.6rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+.release-tag--latest { background: var(--accent); color: var(--bg); }
+.release-tag--pre { background: var(--warning-dim); color: var(--warning); border: 1px solid #ffaa0033; }
+.release-meta { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.3rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+.release-meta span { display: flex; align-items: center; gap: 0.3rem; }
+.release-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 0.35rem; flex-shrink: 0; }
+.dl-btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 1rem; font-family: var(--sans); font-size: 0.78rem; font-weight: 600; border-radius: 6px; text-decoration: none; transition: all 0.2s; border: none; cursor: pointer; white-space: nowrap; }
+.dl-btn--primary { background: var(--accent); color: var(--bg); }
+.dl-btn--primary:hover { box-shadow: 0 0 16px #00ff8833; transform: translateY(-1px); }
+.dl-btn--ghost { background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border); }
+.dl-btn--ghost:hover { color: var(--text); }
+.release-show-more { display: flex; justify-content: center; margin-top: 0.5rem; }
+.show-more-btn { font-family: var(--mono); font-size: 0.75rem; padding: 0.5rem 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; color: var(--text-dim); cursor: pointer; }
+.show-more-btn:hover { color: var(--accent); border-color: var(--accent); }
+.release-selected-summary { display: none; margin-top: 0.75rem; padding: 0.85rem 1.1rem; background: var(--accent-dim); border: 1px solid #00ff8833; border-radius: var(--radius-sm); font-size: 0.88rem; color: #66ffbb; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.release-selected-summary.visible { display: flex; }
+.sel-filename { font-family: var(--mono); font-weight: 600; color: var(--accent); }
+
+.accordion { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; margin: 0.75rem 0; }
+.accordion-item { border-bottom: 1px solid var(--border); }
+.accordion-item:last-child { border-bottom: none; }
+.accordion-header { padding: 0.85rem 1rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: var(--surface); font-size: 0.88rem; font-weight: 600; transition: background 0.2s; }
+.accordion-header:hover { background: var(--surface2); }
+.accordion-arrow { transition: transform 0.3s; color: var(--text-muted); font-size: 0.75rem; }
+.accordion-item.open .accordion-arrow { transform: rotate(180deg); }
+.accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: var(--bg2); }
+.accordion-body-inner { padding: 1rem; font-size: 0.88rem; color: var(--text-dim); line-height: 1.6; }
+
+.os-only { display: none; }
+.os-only.os-visible { display: block; }
+
+footer { position: relative; z-index: 2; text-align: center; padding: 2rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.78rem; line-height: 1.7; }
+footer a { color: var(--accent); text-decoration: none; }
+
+@media (max-width: 640px) { header { padding: 2rem 1.25rem 1.5rem; } .logo-text { font-size: 1.5rem; } main { padding: 1.5rem 1rem 3rem; } .step { padding: 1.5rem 1.25rem; } .step-title { font-size: 1.05rem; } .release-card { flex-wrap: wrap; } .release-actions { width: 100%; flex-direction: row; margin-top: 0.5rem; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.step { animation: fadeInUp 0.5s ease forwards; }
+.step:nth-child(2) { animation-delay: 0.05s; } .step:nth-child(3) { animation-delay: 0.1s; } .step:nth-child(4) { animation-delay: 0.15s; } .step:nth-child(5) { animation-delay: 0.2s; } .step:nth-child(6) { animation-delay: 0.25s; } .step:nth-child(7) { animation-delay: 0.3s; } .step:nth-child(8) { animation-delay: 0.35s; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-mark"><div class="logo-icon">◈</div><div class="logo-text">Rayhunter Flasher</div></div>
+  <p>Step-by-step interactive guide to install EFF's Rayhunter IMSI catcher detector on an Orbic RC400L hotspot.</p>
+  <div class="badge-row">
+    <span class="badge badge--green">Orbic RC400L</span>
+    <span class="badge badge--blue" id="osBadge">Detecting…</span>
+    <span class="badge badge--yellow">~15 min</span>
+  </div>
+  <div class="os-selector">
+    <label>Platform:</label>
+    <select class="os-select" id="osSelect" onchange="changeOS(this.value)">
+      <option value="windows">Windows x86_64</option>
+      <option value="macos-arm">macOS Apple Silicon</option>
+      <option value="macos-intel">macOS Intel</option>
+      <option value="linux-x64">Linux x86_64</option>
+      <option value="linux-aarch64">Linux ARM64</option>
+      <option value="linux-armv7">Linux ARMv7</option>
+    </select>
+    <span class="os-detected-note" id="osDetectedNote"></span>
+  </div>
+</header>
+
+<main>
+<div class="progress-bar"><div class="progress-track" id="progressTrack"></div></div>
+
+<!-- STEP 0 -->
+<section class="step active" data-step="0" id="step-0">
+  <div class="step-header" onclick="goToStep(0)"><div class="step-number">0</div><div class="step-title">What You'll Need</div></div>
+  <div class="step-body">
+    <p>Rayhunter is EFF's open-source tool that turns an Orbic RC400L mobile hotspot into an IMSI catcher (stingray) detector. This guide walks you through flashing it on <strong class="os-label">your computer</strong>.</p>
+    <div class="callout callout--warning"><span class="callout-icon">⚠</span><div><strong>Legal Disclaimer:</strong> Use this program at your own risk. EFF believes running Rayhunter does not violate any laws in the United States. Check your local laws.</div></div>
+    <ul class="checklist">
+      <li><span class="check-box" onclick="toggleCheck(this)"></span><span><strong>Orbic Speed RC400L</strong> — ~$15–30 on eBay/Amazon. Kajeet RC400L also works.</span></li>
+      <li><span class="check-box" onclick="toggleCheck(this)"></span><span><strong>USB-C cable</strong> — for the USB method only. Must support data transfer.</span></li>
+      <li><span class="check-box" onclick="toggleCheck(this)"></span><span><strong>A SIM card</strong> — does <em>not</em> need an active plan.</span></li>
+      <li><span class="check-box" onclick="toggleCheck(this)"></span><span><strong class="os-req-label">A computer</strong> — <span class="os-req-detail">with a terminal available</span>.</span></li>
+      <li><span class="check-box" onclick="toggleCheck(this)"></span><span><strong>WiFi access</strong> — for the recommended WiFi install method.</span></li>
+    </ul>
+    <div class="step-nav"><button class="btn btn--primary" onclick="goToStep(1)">Get Started →</button></div>
+  </div>
+</section>
+
+<!-- STEP 1 -->
+<section class="step" data-step="1" id="step-1">
+  <div class="step-header" onclick="goToStep(1)"><div class="step-number">1</div><div class="step-title">Prepare Your Orbic Device</div></div>
+  <div class="step-body">
+    <p>Unbox your Orbic RC400L. Insert your SIM card (under the battery). Pop the battery back in and snap the cover on.</p>
+    <p>Charge fully, then hold the <strong>power button</strong> until it boots.</p>
+    <div class="callout callout--info"><span class="callout-icon">ℹ</span><div><strong>Default WiFi password:</strong> Check the sticker on/under the device. This is also the admin password for the installer.</div></div>
+    <div class="step-nav"><button class="btn btn--secondary" onclick="goToStep(0)">← Back</button><button class="btn btn--primary" onclick="goToStep(2)">Continue →</button></div>
+  </div>
+</section>
+
+<!-- STEP 2 — DOWNLOAD -->
+<section class="step" data-step="2" id="step-2">
+  <div class="step-header" onclick="goToStep(2)"><div class="step-number">2</div><div class="step-title">Download Rayhunter</div></div>
+  <div class="step-body">
+    <p>Select a release below. Releases are automatically filtered for <strong class="os-label">your platform</strong>. The latest stable version is pre-selected.</p>
+    <div class="release-picker" id="releasePicker">
+      <div class="release-loader" id="releaseLoader"><div class="spinner"></div><span>Fetching releases from GitHub…</span></div>
+      <div class="release-error" id="releaseError" style="display:none;"><span>⚠ Could not fetch releases.</span><button onclick="fetchReleases()">Retry</button></div>
+      <div class="release-list" id="releaseList" style="display:none;"></div>
+      <div class="release-show-more" id="releaseShowMore" style="display:none;"><button class="show-more-btn" onclick="showAllReleases()">Show older releases…</button></div>
+    </div>
+    <div class="release-selected-summary" id="releaseSelectedSummary">
+      <span>✓ Selected:</span><span class="sel-filename" id="selFilename"></span>
+      <a id="selDownloadLink" class="dl-btn dl-btn--primary" href="#" target="_blank" style="margin-left:auto;">↓ Download</a>
+    </div>
+    <div class="callout callout--info" style="margin-top:0.75rem;"><span class="callout-icon">ℹ</span><div class="extract-instructions">After downloading, extract the archive and confirm the installer binary is present.</div></div>
+    <ul class="checklist">
+      <li><span class="check-box" onclick="toggleCheck(this)"></span><span>Downloaded the <span class="os-label">platform</span> archive.</span></li>
+      <li><span class="check-box" onclick="toggleCheck(this)"></span><span>Extracted and confirmed <code class="installer-name">installer</code> is present.</span></li>
+    </ul>
+    <div class="step-nav"><button class="btn btn--secondary" onclick="goToStep(1)">← Back</button><button class="btn btn--primary" onclick="goToStep(3)">Continue →</button></div>
+  </div>
+</section>
+
+<!-- STEP 3 — CONNECT -->
+<section class="step" data-step="3" id="step-3">
+  <div class="step-header" onclick="goToStep(3)"><div class="step-number">3</div><div class="step-title">Connect to the Orbic</div></div>
+  <div class="step-body">
+    <p>Choose your connection method. <strong>WiFi is recommended</strong> — simpler, no driver setup.</p>
+    <div class="method-toggle"><button class="method-btn active" onclick="setMethod('wifi', this)">📡 WiFi (Recommended)</button><button class="method-btn" onclick="setMethod('usb', this)">🔌 USB</button></div>
+    <div class="method-content active" id="method-wifi">
+      <p>Connect your computer to the Orbic's WiFi, then verify by browsing to:</p>
+      <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cmd">http://192.168.1.1</span></div>
+      <p>You should see the Orbic admin page.</p>
+      <div class="callout callout--warning"><span class="callout-icon">⚠</span><div>While on Orbic WiFi, your computer won't have internet. Download everything beforehand.</div></div>
+    </div>
+    <div class="method-content" id="method-usb">
+      <p>Plug a USB-C cable from the Orbic to your computer. The installer uses ADB over USB.</p>
+      <div class="callout callout--info"><span class="callout-icon">ℹ</span><div>The installer auto-downloads ADB if needed. USB command: <code class="installer-name">installer</code> <code>orbic-usb</code>.</div></div>
+      <div class="os-only" data-os="windows"><p>If you have driver issues, install the <strong>Zadig WinUSB driver</strong> from <a href="https://zadig.akeo.ie/" target="_blank">zadig.akeo.ie</a>.</p></div>
+      <div class="os-only" data-os="linux"><p>Ensure ADB is installed: <code>sudo apt-get install android-sdk-platform-tools</code>. You may need udev rules.</p></div>
+    </div>
+    <div class="step-nav"><button class="btn btn--secondary" onclick="goToStep(2)">← Back</button><button class="btn btn--primary" onclick="goToStep(4)">Continue →</button></div>
+  </div>
+</section>
+
+<!-- STEP 4 — TERMINAL -->
+<section class="step" data-step="4" id="step-4">
+  <div class="step-header" onclick="goToStep(4)"><div class="step-number">4</div><div class="step-title" id="step4Title">Open a Terminal in the Installer Folder</div></div>
+  <div class="step-body">
+    <p>Navigate to the extracted Rayhunter folder containing <code class="installer-name">installer</code>.</p>
+    <div class="os-only" data-os="windows">
+      <p>Open PowerShell in that folder:</p>
+      <ul class="checklist"><li><span class="check-box" onclick="toggleCheck(this)"></span><span>Hold <kbd>Shift</kbd> + right-click inside the folder → <strong>"Open PowerShell window here"</strong></span></li></ul>
+      <div class="callout callout--info"><span class="callout-icon">ℹ</span><div>Or open PowerShell and run: <code style="color:var(--accent);">cd "$HOME\Downloads\rayhunter-vX.X.X-windows-x86_64"</code></div></div>
+    </div>
+    <div class="os-only" data-os="macos">
+      <p>Open <strong>Terminal.app</strong> and <code>cd</code> to the folder:</p>
+      <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cmd">cd</span> <span class="string">~/Downloads/rayhunter-vX.X.X-macos-arm</span></div>
+      <div class="callout callout--warning"><span class="callout-icon">⚠</span><div><strong>Required:</strong> Remove the quarantine flag first: <code style="color:var(--accent);">xattr -d com.apple.quarantine installer</code></div></div>
+    </div>
+    <div class="os-only" data-os="linux">
+      <p>Open a terminal and <code>cd</code> to the folder:</p>
+      <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cmd">cd</span> <span class="string">~/Downloads/rayhunter-vX.X.X-linux-x64</span></div>
+      <p>Make the installer executable:</p>
+      <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cmd">chmod</span> <span class="flag">+x</span> <span class="string">installer</span></div>
+    </div>
+    <div class="step-nav"><button class="btn btn--secondary" onclick="goToStep(3)">← Back</button><button class="btn btn--primary" onclick="goToStep(5)">Continue →</button></div>
+  </div>
+</section>
+
+<!-- STEP 5 — RUN INSTALLER -->
+<section class="step" data-step="5" id="step-5">
+  <div class="step-header" onclick="goToStep(5)"><div class="step-number">5</div><div class="step-title">Run the Installer</div></div>
+  <div class="step-body">
+    <p>In your <span class="terminal-name">terminal</span>, run:</p>
+    <div class="method-toggle"><button class="method-btn active" onclick="setInstallMethod('wifi-install', this)">WiFi Install</button><button class="method-btn" onclick="setInstallMethod('usb-install', this)">USB Install</button></div>
+    <div class="method-content active" id="method-wifi-install">
+      <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cmd installer-cmd">./installer</span> <span class="flag">orbic</span> <span class="flag">--admin-password</span> <span class="string">'YOUR_WIFI_PASSWORD'</span></div>
+      <p>Replace <code>YOUR_WIFI_PASSWORD</code> with the Orbic's WiFi/admin password.</p>
+      <div class="callout callout--warning"><span class="callout-icon">⚠</span><div>Changed defaults? Add: <code style="display:block;margin-top:0.5rem;color:var(--accent);" class="full-installer-cmd">./installer orbic --admin-password 'pass' --admin-username 'user' --admin-ip '192.168.1.1'</code></div></div>
+    </div>
+    <div class="method-content" id="method-usb-install">
+      <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cmd installer-cmd">./installer</span> <span class="flag">orbic-usb</span></div>
+      <p>USB method provides ADB access and a root shell. No password needed, but requires USB drivers.</p>
+    </div>
+    <div class="callout callout--danger"><span class="callout-icon">🔴</span><div><strong>Do not unplug or power off</strong> the Orbic during installation. It reboots multiple times. Wait for the success message.</div></div>
+    <div class="step-nav"><button class="btn btn--secondary" onclick="goToStep(4)">← Back</button><button class="btn btn--primary" onclick="goToStep(6)">Continue →</button></div>
+  </div>
+</section>
+
+<!-- STEP 6 — VERIFY -->
+<section class="step" data-step="6" id="step-6">
+  <div class="step-header" onclick="goToStep(6)"><div class="step-number">6</div><div class="step-title">Verify Installation</div></div>
+  <div class="step-body">
+    <p>After the installer finishes, look for a <strong style="color:var(--accent);">green line</strong> on the Orbic's display — Rayhunter is running!</p>
+    <p>Connect to the Orbic's WiFi and open:</p>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cmd">http://192.168.1.1:8080</span></div>
+    <div class="callout callout--success"><span class="callout-icon">✓</span><div><strong>Red line?</strong> Rayhunter detected suspicious activity. Download logs from the web UI and optionally report to EFF.</div></div>
+    <ul class="checklist">
+      <li><span class="check-box" onclick="toggleCheck(this)"></span><span>Green line visible on Orbic.</span></li>
+      <li><span class="check-box" onclick="toggleCheck(this)"></span><span>Web UI loads at <code>http://192.168.1.1:8080</code>.</span></li>
+    </ul>
+    <div class="step-nav"><button class="btn btn--secondary" onclick="goToStep(5)">← Back</button><button class="btn btn--primary" onclick="goToStep(7)">Continue →</button></div>
+  </div>
+</section>
+
+<!-- STEP 7 — TROUBLESHOOTING -->
+<section class="step" data-step="7" id="step-7">
+  <div class="step-header" onclick="goToStep(7)"><div class="step-number">7</div><div class="step-title">Troubleshooting & Tips</div></div>
+  <div class="step-body">
+    <div class="accordion">
+      <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)"><span>Installer can't find the Orbic device</span><span class="accordion-arrow">▼</span></div><div class="accordion-body"><div class="accordion-body-inner">Make sure you're connected to the Orbic's WiFi or have USB plugged in with drivers. Try <code>http://192.168.1.1</code> first. For USB, try a different cable/port.</div></div></div>
+      <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)"><span>Installer hangs during reboot</span><span class="accordion-arrow">▼</span></div><div class="accordion-body"><div class="accordion-body-inner">Wait 3–5 minutes. If truly stuck, remove battery, wait 10s, reinsert, and re-run the installer.</div></div></div>
+      <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)"><span>Wrong password / auth error</span><span class="accordion-arrow">▼</span></div><div class="accordion-body"><div class="accordion-body-inner">The admin password is the WiFi password on the device sticker. Factory reset: hold reset button under back panel until reboot.</div></div></div>
+      <div class="accordion-item os-only" data-os="windows"><div class="accordion-header" onclick="toggleAccordion(this)"><span>PowerShell / SmartScreen blocks installer.exe</span><span class="accordion-arrow">▼</span></div><div class="accordion-body"><div class="accordion-body-inner">Right-click <code>installer.exe</code> → Properties → check "Unblock" → Apply. Or run: <code>Unblock-File .\installer.exe</code></div></div></div>
+      <div class="accordion-item os-only" data-os="macos"><div class="accordion-header" onclick="toggleAccordion(this)"><span>macOS says the installer "can't be opened"</span><span class="accordion-arrow">▼</span></div><div class="accordion-body"><div class="accordion-body-inner">Run <code>xattr -d com.apple.quarantine installer</code> first. If "No Orbic device found," set System Settings → Privacy & Security → Allow accessories → "Always" temporarily.</div></div></div>
+      <div class="accordion-item os-only" data-os="linux"><div class="accordion-header" onclick="toggleAccordion(this)"><span>Permission denied or ADB not found</span><span class="accordion-arrow">▼</span></div><div class="accordion-body"><div class="accordion-body-inner">Run <code>chmod +x installer</code>. Install ADB: <code>sudo apt-get install android-sdk-platform-tools</code>. May need udev rules for USB.</div></div></div>
+      <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)"><span>How to test if Rayhunter works</span><span class="accordion-arrow">▼</span></div><div class="accordion-body"><div class="accordion-body-inner">In the web UI, enable the <strong>Test Heuristic</strong> under Config. Alerts fire on every new tower — noisy but confirms it works.</div></div></div>
+      <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)"><span>Using a non-Verizon SIM</span><span class="accordion-arrow">▼</span></div><div class="accordion-body"><div class="accordion-body-inner">Most Verizon Orbics are actually unlocked. After flashing, users have successfully used SIMs from other carriers.</div></div></div>
+      <div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)"><span>Reporting detections to EFF</span><span class="accordion-arrow">▼</span></div><div class="accordion-body"><div class="accordion-body-inner">Download logs from the web UI and send to EFF via Signal: <strong>ElectronicFrontierFoundation.90</strong>. Include date, location, device, and version.</div></div></div>
+    </div>
+    <div class="callout callout--info" style="margin-top:1.25rem;"><span class="callout-icon">📖</span><div>Full docs: <a href="https://efforg.github.io/rayhunter/" target="_blank">efforg.github.io/rayhunter</a></div></div>
+    <div class="step-nav"><button class="btn btn--secondary" onclick="goToStep(6)">← Back</button><button class="btn btn--primary" style="background:var(--info);box-shadow:0 0 20px #44aaff22;" disabled>🎉 All Done!</button></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  Rayhunter is developed by the <a href="https://www.eff.org/" target="_blank">EFF</a> under GPLv3. This is an unofficial companion guide.<br>
+  Source & docs: <a href="https://github.com/EFForg/rayhunter" target="_blank">github.com/EFForg/rayhunter</a>
+</footer>
+
+<script>
+const OS_CFG = {
+  'windows':       { label:'Windows',             badge:'Windows x86_64',  key:'windows',       bin:'installer.exe', cmd:'.\\installer.exe', fullCmd:'.\\installer.exe orbic --admin-password \'pass\' --admin-username \'user\' --admin-ip \'192.168.1.1\'', term:'PowerShell', reqLabel:'Windows 10 or 11', reqDetail:'with PowerShell available', extract:'After downloading, <strong>right-click the ZIP → Extract All</strong> to a folder. Confirm <code>installer.exe</code> is inside.', family:'windows' },
+  'macos-arm':     { label:'macOS (Apple Silicon)', badge:'macOS ARM',      key:'macos-arm',     bin:'installer',     cmd:'./installer',      fullCmd:'./installer orbic --admin-password \'pass\' --admin-username \'user\' --admin-ip \'192.168.1.1\'',      term:'Terminal',   reqLabel:'macOS (Apple Silicon)', reqDetail:'with Terminal.app', extract:'Double-click the ZIP to extract. In Terminal, <code>cd</code> to the folder and run <code>xattr -d com.apple.quarantine installer</code>.', family:'macos' },
+  'macos-intel':   { label:'macOS (Intel)',         badge:'macOS Intel',    key:'macos-intel',   bin:'installer',     cmd:'./installer',      fullCmd:'./installer orbic --admin-password \'pass\' --admin-username \'user\' --admin-ip \'192.168.1.1\'',      term:'Terminal',   reqLabel:'macOS (Intel)',         reqDetail:'with Terminal.app', extract:'Double-click the ZIP to extract. In Terminal, <code>cd</code> to the folder and run <code>xattr -d com.apple.quarantine installer</code>.', family:'macos' },
+  'linux-x64':     { label:'Linux x64',             badge:'Linux x86_64',   key:'linux-x64',     bin:'installer',     cmd:'./installer',      fullCmd:'./installer orbic --admin-password \'pass\' --admin-username \'user\' --admin-ip \'192.168.1.1\'',      term:'terminal',   reqLabel:'Linux (x86_64)',       reqDetail:'tested on Ubuntu 24.04', extract:'Extract with <code>unzip rayhunter-*.zip</code>, then <code>chmod +x installer</code>.', family:'linux' },
+  'linux-aarch64': { label:'Linux ARM64',            badge:'Linux ARM64',    key:'linux-aarch64', bin:'installer',     cmd:'./installer',      fullCmd:'./installer orbic --admin-password \'pass\' --admin-username \'user\' --admin-ip \'192.168.1.1\'',      term:'terminal',   reqLabel:'Linux (ARM64)',         reqDetail:'with a terminal', extract:'Extract with <code>unzip rayhunter-*.zip</code>, then <code>chmod +x installer</code>.', family:'linux' },
+  'linux-armv7':   { label:'Linux ARMv7',            badge:'Linux ARMv7',    key:'linux-armv7',   bin:'installer',     cmd:'./installer',      fullCmd:'./installer orbic --admin-password \'pass\' --admin-username \'user\' --admin-ip \'192.168.1.1\'',      term:'terminal',   reqLabel:'Linux (ARMv7)',         reqDetail:'with a terminal', extract:'Extract with <code>unzip rayhunter-*.zip</code>, then <code>chmod +x installer</code>.', family:'linux' }
+};
+
+let curOS = 'windows';
+
+function detectOS() {
+  const ua = navigator.userAgent.toLowerCase();
+  if (ua.includes('win')) return 'windows';
+  if (ua.includes('mac')) {
+    try { const c=document.createElement('canvas'), g=c.getContext('webgl'), d=g.getExtension('WEBGL_debug_renderer_info'), r=g.getParameter(d.UNMASKED_RENDERER_WEBGL).toLowerCase(); if(r.includes('apple')||r.includes('m1')||r.includes('m2')||r.includes('m3')||r.includes('m4')) return 'macos-arm'; } catch(e){}
+    return 'macos-arm';
+  }
+  if (ua.includes('aarch64')||ua.includes('arm64')) return 'linux-aarch64';
+  if (ua.includes('armv7')||ua.includes('arm')) return 'linux-armv7';
+  if (ua.includes('linux')||ua.includes('x11')) return 'linux-x64';
+  return 'windows';
+}
+
+function applyOS(os) {
+  curOS = os;
+  const c = OS_CFG[os]; if(!c) return;
+  document.getElementById('osBadge').textContent = c.badge;
+  document.getElementById('osSelect').value = os;
+  document.querySelectorAll('.os-label').forEach(e => e.textContent = c.label);
+  document.querySelectorAll('.os-req-label').forEach(e => e.textContent = c.reqLabel);
+  document.querySelectorAll('.os-req-detail').forEach(e => e.textContent = c.reqDetail);
+  document.querySelectorAll('.installer-name').forEach(e => e.textContent = c.bin);
+  document.querySelectorAll('.installer-cmd').forEach(e => e.textContent = c.cmd);
+  document.querySelectorAll('.full-installer-cmd').forEach(e => e.textContent = c.fullCmd);
+  document.querySelectorAll('.terminal-name').forEach(e => e.textContent = c.term);
+  document.querySelectorAll('.extract-instructions').forEach(e => e.innerHTML = c.extract);
+  const t = document.getElementById('step4Title');
+  t.textContent = os==='windows' ? 'Open PowerShell in the Installer Folder' : c.family==='macos' ? 'Open Terminal in the Installer Folder' : 'Open a Terminal in the Installer Folder';
+  const dots = document.querySelectorAll('.progress-dot');
+  if(dots[4]) dots[4].dataset.label = os==='windows' ? 'PowerShell' : 'Terminal';
+  document.querySelectorAll('.os-only').forEach(el => {
+    const t = el.dataset.os;
+    el.classList.toggle('os-visible', t===os || t===c.family);
+  });
+  if(allReleases.length) { renderReleases(allReleases, showingAll); autoSelectBest(); }
+}
+
+function changeOS(os) { applyOS(os); document.getElementById('osDetectedNote').textContent = '(manually selected)'; }
+
+// ─── NAV ───
+const TOTAL_STEPS=8; let currentStep=0;
+const track=document.getElementById('progressTrack');
+['Prereqs','Prepare','Download','Connect','Terminal','Install','Verify','Done'].forEach((l,i) => {
+  const d=document.createElement('div'); d.className='progress-dot'+(i===0?' active':''); d.dataset.label=l; d.onclick=()=>goToStep(i); track.appendChild(d);
+});
+
+function goToStep(n) { currentStep=n; document.querySelectorAll('.step').forEach((e,i)=>{e.classList.remove('active','completed');if(i===n)e.classList.add('active');else if(i<n)e.classList.add('completed');}); document.querySelectorAll('.progress-dot').forEach((d,i)=>{d.classList.remove('active','done');if(i===n)d.classList.add('active');else if(i<n)d.classList.add('done');}); document.getElementById('step-'+n).scrollIntoView({behavior:'smooth',block:'start'}); }
+function toggleCheck(el){el.classList.toggle('checked');}
+function copyCode(btn){const t=btn.parentElement.textContent.replace('Copy','').replace('Copied!','').trim();navigator.clipboard.writeText(t).then(()=>{btn.textContent='Copied!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied');},2000);});}
+function setMethod(m,b){b.parentElement.querySelectorAll('.method-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('method-wifi').classList.toggle('active',m==='wifi');document.getElementById('method-usb').classList.toggle('active',m==='usb');}
+function setInstallMethod(m,b){b.parentElement.querySelectorAll('.method-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('method-wifi-install').classList.toggle('active',m==='wifi-install');document.getElementById('method-usb-install').classList.toggle('active',m==='usb-install');}
+function toggleAccordion(h){const i=h.parentElement,b=i.querySelector('.accordion-body'),o=i.classList.contains('open');document.querySelectorAll('.accordion-item').forEach(a=>{a.classList.remove('open');a.querySelector('.accordion-body').style.maxHeight='0';});if(!o){i.classList.add('open');b.style.maxHeight=b.scrollHeight+'px';}}
+
+// ─── RELEASES ───
+const API='https://api.github.com/repos/EFForg/rayhunter/releases';
+const SHOW=5; let allReleases=[],showingAll=false,selectedRelease=null;
+
+function fmtB(b){return b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB';}
+function ago(d){const s=Math.floor((Date.now()-new Date(d))/1000);if(s<60)return'now';const m=Math.floor(s/60);if(m<60)return m+'m';const h=Math.floor(m/60);if(h<24)return h+'h';const dy=Math.floor(h/24);if(dy<30)return dy+'d';const mo=Math.floor(dy/30);return mo<12?mo+'mo':Math.floor(mo/12)+'y';}
+
+function findAsset(assets,osKey){const k=OS_CFG[osKey].key.toLowerCase();return assets.find(a=>{const n=a.name.toLowerCase();return n.includes(k)&&(n.endsWith('.zip')||n.endsWith('.tar.gz')||n.endsWith('.tar'));});}
+
+function parseRel(r,isLatest){const a=findAsset(r.assets,curOS);return{tag:r.tag_name,pre:r.prerelease,pub:r.published_at,url:r.html_url,isLatest,asset:a?{name:a.name,size:a.size,dl:a.browser_download_url}:null,total:r.assets.reduce((s,x)=>s+x.download_count,0),raw:r.assets};}
+
+function autoSelectBest(){const b=allReleases.find(r=>!r.pre&&r.asset);if(b)selectRelease(b.tag);else if(allReleases[0])selectRelease(allReleases[0].tag);}
+
+function selectRelease(tag){const r=allReleases.find(x=>x.tag===tag);if(!r)return;selectedRelease=r;document.querySelectorAll('.release-card').forEach(c=>c.classList.toggle('selected',c.dataset.tag===tag));const s=document.getElementById('releaseSelectedSummary'),f=document.getElementById('selFilename'),l=document.getElementById('selDownloadLink');if(r.asset){f.textContent=r.asset.name;l.href=r.asset.dl;l.textContent='↓ Download';}else{f.textContent=r.tag+' (no '+OS_CFG[curOS].label+' build)';l.href=r.url;l.textContent='View on GitHub';}s.classList.add('visible');}
+
+function renderReleases(rels,all){
+  rels.forEach(r=>{const a=findAsset(r.raw,curOS);r.asset=a?{name:a.name,size:a.size,dl:a.browser_download_url}:null;});
+  const list=document.getElementById('releaseList'),more=document.getElementById('releaseShowMore');list.innerHTML='';
+  const show=all?rels:rels.slice(0,SHOW),lbl=OS_CFG[curOS].label;
+  show.forEach(r=>{
+    const c=document.createElement('div');c.className='release-card'+(selectedRelease&&selectedRelease.tag===r.tag?' selected':'');c.dataset.tag=r.tag;c.onclick=()=>selectRelease(r.tag);
+    const tags=(r.isLatest?'<span class="release-tag release-tag--latest">latest</span> ':'')+(r.pre?'<span class="release-tag release-tag--pre">pre-release</span>':'');
+    const info=r.asset?'<span>📦 '+r.asset.name+'</span><span>💾 '+fmtB(r.asset.size)+'</span>':'<span style="color:#ff8899;">⚠ No '+lbl+' build</span>';
+    c.innerHTML='<div class="release-radio"></div><div class="release-info"><div class="release-version">'+r.tag+' '+tags+'</div><div class="release-meta">'+info+'<span>🕐 '+ago(r.pub)+'</span><span>↓ '+r.total.toLocaleString()+'</span></div></div><div class="release-actions">'+(r.asset?'<a class="dl-btn dl-btn--primary" href="'+r.asset.dl+'" target="_blank" onclick="event.stopPropagation()">↓ Download</a>':'<a class="dl-btn dl-btn--ghost" href="'+r.url+'" target="_blank" onclick="event.stopPropagation()">GitHub ↗</a>')+'</div>';
+    list.appendChild(c);
+  });
+  list.style.display='';more.style.display=(!all&&rels.length>SHOW)?'':'none';
+}
+
+function showAllReleases(){showingAll=true;renderReleases(allReleases,true);}
+
+async function fetchReleases(){
+  const ld=document.getElementById('releaseLoader'),er=document.getElementById('releaseError'),li=document.getElementById('releaseList');
+  ld.style.display='';er.style.display='none';li.style.display='none';
+  try{
+    const r=await fetch(API+'?per_page=30',{headers:{'Accept':'application/vnd.github.v3+json'}});if(!r.ok)throw new Error('HTTP '+r.status);
+    const d=await r.json(),stable=d.filter(x=>!x.draft&&!x.prerelease),first=stable[0]?stable[0].tag_name:null;
+    allReleases=d.filter(x=>!x.draft).map(x=>parseRel(x,x.tag_name===first));
+    ld.style.display='none';
+    if(!allReleases.length){er.querySelector('span').textContent='⚠ No releases found.';er.style.display='';return;}
+    renderReleases(allReleases,showingAll);autoSelectBest();
+  }catch(e){ld.style.display='none';er.style.display='';er.querySelector('span').textContent='⚠ '+e.message;}
+}
+
+// ─── INIT ───
+const detected=detectOS();curOS=detected;
+document.getElementById('osDetectedNote').textContent='(auto-detected)';
+applyOS(detected);fetchReleases();
+</script>
+</body>
+</html>
