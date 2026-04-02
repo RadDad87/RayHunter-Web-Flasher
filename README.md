@@ -1,17 +1,15 @@
 # ◈ RayHunter Install Wizard
 
-> **Interactive step-by-step guide to flash [EFF's Rayhunter](https://github.com/EFForg/rayhunter) IMSI catcher detector on an Orbic RC400L hotspot from Windows.**
+> **Interactive step-by-step guide to flash [EFF's Rayhunter](https://github.com/EFForg/rayhunter) IMSI catcher detector on an Orbic RC400L hotspot. Auto-detects your OS.**
 
-[![GitHub Pages](https://img.shields.io/badge/Launch-Install%20Wizard-00ff88?style=for-the-badge&logo=github)](https://YOUR_USERNAME.github.io/rayhunter-install-wizard/)
+[![GitHub Pages](https://img.shields.io/badge/Launch-Install%20Wizard-00ff88?style=for-the-badge&logo=github)](https://raddad87.github.io/RayHunter-Web-Flasher/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 
 ---
 
 ## 🚀 Launch the Wizard
 
-**👉 [Open the Install Wizard](https://YOUR_USERNAME.github.io/rayhunter-install-wizard/)**
-
-Replace `YOUR_USERNAME` with your GitHub username after deployment.
+**👉 [Open the Install Wizard](https://raddad87.github.io/RayHunter-Web-Flasher/)**
 
 ---
 
@@ -19,18 +17,19 @@ Replace `YOUR_USERNAME` with your GitHub username after deployment.
 
 [Rayhunter](https://github.com/EFForg/rayhunter) is the Electronic Frontier Foundation's open-source tool for detecting IMSI catchers (cell-site simulators / stingrays). It runs on an inexpensive Orbic RC400L mobile hotspot (~$15–30 USD) and monitors cellular traffic for signs of surveillance.
 
-This wizard provides a guided, beginner-friendly installation experience specifically for **Windows** users.
+This wizard provides a guided, beginner-friendly installation experience for **Windows, macOS, and Linux** users.
 
 ## Features
 
+- **Auto-detects your OS** — Windows, macOS (ARM & Intel), and Linux (x64, ARM64, ARMv7)
+- **Live release picker** — fetches the latest Rayhunter releases from GitHub, filtered for your platform
 - **8-step interactive wizard** with progress tracking
-- **WiFi & USB install methods** — toggle between both with method-specific instructions
-- **Copy-to-clipboard commands** — one-click copy for all PowerShell commands
+- **WiFi & USB install methods** — toggle between both with OS-specific instructions
+- **Copy-to-clipboard commands** — one-click copy for all terminal commands
 - **Interactive checklists** — track your progress through each step
-- **Troubleshooting FAQ** — accordion-style answers for common issues
+- **Troubleshooting FAQ** — OS-specific answers for common issues
 - **Fully offline** — runs as a single HTML file, no build step or dependencies
 - **Mobile-friendly** — responsive design works on phones and tablets
-- **Dark theme** — easy on the eyes
 
 ## Quick Start
 
@@ -39,7 +38,7 @@ This wizard provides a guided, beginner-friendly installation experience specifi
 1. Fork or clone this repository
 2. Go to **Settings → Pages**
 3. Set source to **Deploy from a branch → `main` → `/ (root)`**
-4. Your wizard is live at `https://YOUR_USERNAME.github.io/rayhunter-install-wizard/`
+4. Your wizard is live at your GitHub Pages URL
 
 ### Option 2: Open locally
 
@@ -51,16 +50,17 @@ Just double-click `index.html` — it's a single self-contained file with no dep
 |---|---|
 | **Orbic RC400L** | ~$15–30 on eBay/Amazon. Kajeet RC400L also works. |
 | **SIM card** | Any SIM — does not need an active plan. |
-| **Windows 10/11** | With PowerShell available. |
+| **Computer** | Windows 10/11, macOS, or Linux with a terminal. |
 | **WiFi or USB-C cable** | WiFi method recommended (no driver setup). |
 
 ## Project Structure
 
 ```
-rayhunter-install-wizard/
+RayHunter-Web-Flasher/
 ├── index.html          # The complete wizard app (single file)
 ├── README.md           # This file
 ├── LICENSE             # MIT License
+├── 404.html            # Redirect for bad URLs
 └── .nojekyll           # Tells GitHub Pages to skip Jekyll processing
 ```
 
